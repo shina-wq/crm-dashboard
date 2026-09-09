@@ -52,21 +52,64 @@ Target look: dense, high-contrast, data-first. Muted neutral background, one con
 
 ## 3.2 Color System
 
-Define a small, deliberate palette rather than using raw Tailwind colors ad hoc:
+**Governing rule: one accent color.** Indigo is the only color that means "interactive" — primary buttons, active nav state, active sort/filter indicators, links, focus rings. Nothing else in the palette competes with it. This is the actual modern pattern (Linear, Vercel, Raycast, Arc): restraint, not variety. A second or third "accent" dilutes what indigo signals — the moment three colors mean "click me," none of them do.
 
-* **Background layers** — base app background, card background, and elevated/hover background as three distinct, closely-related neutral tones (not pure white/black).
-* **Text** — primary, secondary (muted), and disabled text tones with sufficient contrast at each layer.
-* **Accent** — one primary accent color used for primary buttons, active nav state, active sort/filter indicators, and links. Used sparingly — it should mean something when it appears.
-* **Semantic colors** — success, warning, danger, and info, used consistently (e.g. error states, destructive actions, at-risk badges).
-* **Segment colors** — each of VIP, High Value, Standard, At Risk, and No Purchase History gets a distinct badge color, but badges must also carry a text label and/or icon — color is never the only signal (see Section 33).
+Every other color in this palette is **semantic or categorical only** — it never appears on a button or nav item, only on badges, banners, and chart series.
 
-Colors should be defined once as CSS variables / Tailwind theme tokens and referenced everywhere, never hardcoded per-component.
+### Base neutrals (Slate)
+
+| Token | Light | Dark |
+|---|---|---|
+| Background | `#F8FAFC` | `#0F172A` |
+| Card / surface | `#FFFFFF` | `#1E293B` |
+| Border | `#E2E8F0` | `#334155` |
+| Text primary | `#0F172A` | `#F8FAFC` |
+| Text secondary | `#64748B` | `#94A3B8` |
+
+### Accent (Indigo — the only one)
+
+| Token | Light | Dark |
+|---|---|---|
+| Accent | `#4F46E5` | `#6366F1` |
+| Accent hover | `#4338CA` | `#818CF8` |
+
+Used for: primary button fill, active nav item, active filter/sort state, links, focus rings. Nowhere else.
+
+### Semantic colors
+
+| Role | Light bg / text | Dark bg / text |
+|---|---|---|
+| Success | `#D1FAE5` / `#047857` | `#064E3B` / `#6EE7B7` |
+| Warning | `#FEF3C7` / `#B45309` | `#78350F` / `#FDE68A` |
+| Danger | `#FEE2E2` / `#B91C1C` | `#7F1D1D` / `#FCA5A5` |
+
+Used for: form validation, error states, destructive-action confirmation, retry banners.
+
+### Segment badges (categorical, tinted style)
+
+Badges use a pale tinted background with saturated text of the same hue — never a solid fill, never color alone (each badge also carries its text label):
+
+| Segment | Light bg / text | Dark bg / text |
+|---|---|---|
+| VIP (violet) | `#EDE9FE` / `#6D28D9` | `#4C1D95` / `#DDD6FE` |
+| High Value (indigo, muted) | `#EEF2FF` / `#4338CA` | `#3730A3` / `#C7D2FE` |
+| Standard (slate) | `#F1F5F9` / `#475569` | `#334155` / `#CBD5E1` |
+| At Risk (amber) | `#FEF3C7` / `#B45309` | `#78350F` / `#FDE68A` |
+| No Purchase History | outline only — border `#CBD5E1`, text `#64748B` | border `#475569`, text `#94A3B8` |
+
+High Value reuses the indigo hue at a muted tint specifically because it is the second-strongest segment, adjacent in meaning to the accent — this is the one deliberate exception to "accent means only interactive," and it's still never used on a clickable element, only the badge.
+
+### Reserved / not yet used
+
+Cyan (`#06B6D4`) is available for a chart series if a sixth categorical color is ever needed (e.g. a line in a multi-series chart) — it is not assigned to any UI role yet. Do not add it to a button, nav item, or badge without a specific, documented reason; unused reserved colors are safer than colors added "because they look nice."
+
+Colors are defined once as CSS variables / Tailwind theme tokens and referenced everywhere — never hardcoded per-component, and never introduced ad hoc outside this table.
 
 ## 3.3 Typography
 
-* One typeface family for the whole app (a system font stack or a single Google Font such as Inter is sufficient — do not mix decorative and body fonts).
-* A defined type scale: page title, section heading, card heading, body text, small/meta text, table cell text. Every text element in the app should map to one of these, not a one-off `text-[13px]`.
-* Numbers in KPI cards and tables should use a monospace or tabular-numeral treatment so figures align and don't jitter between states.
+* **Inter**, loaded via Google Fonts, is the sole typeface for the whole app. Weights 400 (body) and 500 (headings, emphasis) only — do not add 600/700, they read as heavy against the flat, low-shadow surface style in Section 3.4.
+* A defined type scale: page title (20px/500), section heading (16px/500), card heading (13px/500), body text (14px/400), small/meta text (12px/400), table cell text (12–13px/400). Every text element in the app should map to one of these, not a one-off `text-[13px]`.
+* Numbers in KPI cards and tables use `font-variant-numeric: tabular-nums` so figures align and don't jitter between states. Currency and large counts should also route through a shared formatter (see Section 35).
 
 ## 3.4 Spacing & Layout
 
