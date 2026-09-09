@@ -16,6 +16,23 @@ Testing focuses on:
 
 The goal is to verify **user-visible behavior and business rules**, not implementation details.
 
+## 1.1 How to Use This Document
+
+This document is a **reference catalog**, not a day-one checklist. It intentionally lists more test cases than a solo project should write before shipping a working UI.
+
+Do not attempt Sections 2–41 in order. Build in this sequence instead:
+
+```text
+1. Get segmentation, transformation, and metric logic correct and unit-tested (Sections 6–13)
+   → this is the part of the app that can be silently wrong
+2. Get auth, routing, search, and filtering working with light test coverage
+3. Get the UI looking good (see UI-SPEC.md Section 3, Design System)
+4. Come back and fill in Sections 17–40 (component/integration/a11y coverage)
+   as backlog items, prioritized by Section 42
+```
+
+Writing exhaustive filter-combination or pagination tests before the UI has a real design pass is a common trap: it produces a well-tested app that still looks like a tutorial. Section 42's Priority tiers exist specifically to prevent this — treat them as binding, not advisory.
+
 ---
 
 # 2. Testing Stack
@@ -862,6 +879,8 @@ This provides:
 
 Mock data should resemble the real API structure.
 
+CI (see `ARCHITECTURE.md`, Section 19) has no network access to DummyJSON — this rule is a hard requirement, not a preference.
+
 ---
 
 # 37. Test Fixtures
@@ -933,6 +952,8 @@ Tests should verify:
 
 Accessibility testing should focus on meaningful user behavior rather than checking every generated DOM attribute.
 
+Using shadcn/ui primitives (`ARCHITECTURE.md`, Section 2) for select, dropdown, dialog, and combobox controls removes most of the keyboard/ARIA burden from this section — tests here should confirm the app wires them up correctly, not re-verify Radix's own behavior.
+
 ---
 
 # 40. Snapshot Testing
@@ -959,6 +980,7 @@ The test suite should not spend significant effort testing:
 * React Router internals
 * Tailwind CSS classes individually
 * Recharts internals
+* Radix/shadcn primitive internals (keyboard nav, focus trapping, ARIA wiring — that's Radix's job, not this app's)
 * DummyJSON itself
 * Implementation details that users cannot observe
 
@@ -970,7 +992,7 @@ The goal is to test application behavior.
 
 If development time is limited, testing priority should be:
 
-### Priority 1
+### Priority 1 — build and test first
 
 * Customer transformation
 * Customer metrics
@@ -979,7 +1001,7 @@ If development time is limited, testing priority should be:
 * Authentication
 * Customer search and filtering
 
-### Priority 2
+### Priority 2 — after the UI has a real design pass
 
 * URL filter state
 * Customer profile
@@ -987,11 +1009,13 @@ If development time is limited, testing priority should be:
 * Pagination
 * Sorting
 
-### Priority 3
+### Priority 3 — backlog, fill in opportunistically
 
 * Detailed visual behavior
 * Secondary UI interactions
 * Non-critical formatting edge cases
+
+These tiers are gating criteria, not suggestions: do not start Priority 2 component tests until Priority 1 logic is correct and the visual design system (`UI-SPEC.md`, Section 3) is in place. Writing thorough Priority 2/3 tests against a UI that will still be visually reworked is wasted effort.
 
 ---
 

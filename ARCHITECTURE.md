@@ -18,21 +18,37 @@ The architecture separates **API data**, **derived CRM data**, **application sta
 
 ## 2. Technology Stack
 
-| Area         | Technology                     |
-| ------------ | ------------------------------ |
-| Framework    | React                          |
-| Language     | TypeScript                     |
-| Build Tool   | Vite                           |
-| Routing      | React Router                   |
-| Server State | TanStack Query                 |
-| Styling      | Tailwind CSS                   |
-| Charts       | Recharts                       |
-| Forms        | React Hook Form                |
-| Validation   | Zod                            |
-| Icons        | Lucide React                   |
-| Testing      | Vitest + React Testing Library |
-| Data Source  | DummyJSON                      |
-| Deployment   | Vercel                         |
+| Area           | Technology                     |
+| -------------- | ------------------------------- |
+| Framework      | React                           |
+| Language       | TypeScript                      |
+| Build Tool     | Vite                            |
+| Routing        | React Router                    |
+| Server State   | TanStack Query                  |
+| Styling        | Tailwind CSS                    |
+| UI Primitives  | shadcn/ui (Radix-based)         |
+| Charts         | Recharts                        |
+| Forms          | React Hook Form                 |
+| Validation     | Zod                             |
+| Icons          | Lucide React                    |
+| Testing        | Vitest + React Testing Library  |
+| CI             | GitHub Actions                  |
+| Data Source    | DummyJSON                       |
+| Deployment     | Vercel                          |
+
+### Why shadcn/ui
+
+Tailwind alone means hand-building accessible dropdowns, dialogs, comboboxes, and popovers from scratch. shadcn/ui provides Radix-based primitives (dropdown, dialog, combobox, popover, tooltip, select) with correct keyboard navigation, focus management, and ARIA behavior out of the box, styled with Tailwind so they stay visually consistent with the rest of the app.
+
+Use shadcn/ui for:
+
+* Segment filter / purchase-history filter (`Select`)
+* Customer search (`Command` / combobox)
+* Sort controls (`DropdownMenu`)
+* Any modal or confirmation UI (`Dialog`)
+* Tooltips on truncated table cells (`Tooltip`)
+
+Do not use shadcn/ui for one-off layout containers, cards, or anything simple enough to build directly with Tailwind. Reaching for a primitive when a `div` and two classes would do is unnecessary overhead.
 
 ---
 
@@ -211,6 +227,7 @@ React state should handle temporary interface state such as:
 * Dropdowns
 * Modal visibility
 * Selected UI elements
+* Theme preference (light / dark), persisted to `localStorage`
 
 ### Authentication State
 
@@ -252,7 +269,7 @@ src/
 │   └── routes.tsx
 │
 ├── components/
-│   ├── ui/
+│   ├── ui/            (shadcn/ui primitives)
 │   ├── layout/
 │   └── shared/
 │
@@ -302,7 +319,7 @@ src/
 
 **`components/ui/`**
 
-* Reusable presentational components
+* shadcn/ui primitives and other reusable presentational components
 
 **`lib/`**
 
@@ -532,9 +549,64 @@ Customer Profile
 
 Tests should prioritize behavior and outcomes rather than implementation details.
 
+Test priority and phasing are defined in `TESTING.md`, Section 42. Do not treat every section of `TESTING.md` as required before the UI is functional — Priority 1 items come first.
+
 ---
 
-## 19. Architecture Principles
+## 19. Continuous Integration
+
+The project uses **GitHub Actions** to keep the test suite and type checks honest on every push.
+
+### Pipeline
+
+```text
+on: push, pull_request
+     ↓
+Install dependencies (npm ci)
+     ↓
+Type check (tsc --noEmit)
+     ↓
+Lint
+     ↓
+Unit + component tests (vitest run)
+     ↓
+Build (vite build)
+```
+
+### Requirements
+
+* CI must run on every pull request targeting `main`.
+* A failing type check, lint, test, or build fails the pipeline.
+* Tests must not depend on the live DummyJSON API (see `TESTING.md`, Section 36) — CI has no network access to it and must not need one.
+* The pipeline should complete in a few minutes given the size of this project; no test sharding or caching complexity is needed at this scale.
+
+### Example Workflow
+
+```text
+.github/workflows/ci.yml
+
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run test
+      - run: npm run build
+```
+
+A green CI badge in the repository README is part of the project's presentation, not just a safety net.
+
+---
+
+## 20. Architecture Principles
 
 The project follows these principles:
 
@@ -548,3 +620,4 @@ The project follows these principles:
 8. **Prefer simple architecture over unnecessary abstraction.**
 9. **Test business-critical logic.**
 10. **Optimize for maintainability and clarity over premature performance optimization.**
+11. **Enforce quality automatically.** Type checks, lint, and tests run in CI on every change, not just locally.

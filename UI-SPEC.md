@@ -7,6 +7,7 @@ This document defines the user interface and interaction requirements for the CR
 It describes:
 
 * Application screens
+* Design system
 * Page structure
 * Navigation
 * Information hierarchy
@@ -35,13 +36,62 @@ The interface should be:
 * Accessible
 * Honest about missing data
 
-The dashboard should feel like a realistic internal CRM tool rather than a generic analytics template.
+The dashboard should feel like a realistic internal CRM tool rather than a generic analytics template. It should read as a **dense, professional data tool** — closer to Linear, Vercel's dashboard, or Stripe's dashboard than to a generic admin-template screenshot.
 
 Information should be prioritized based on how useful it is to a support or customer-facing team.
 
 ---
 
-# 3. Application Structure
+# 3. Design System
+
+A design system must be defined before UI components are built. Skipping this step is what makes dashboards look like default Tailwind templates.
+
+## 3.1 Reference Aesthetic
+
+Target look: dense, high-contrast, data-first. Muted neutral background, one confident accent color reserved for primary actions and active states, generous use of subtle borders instead of heavy shadows. Avoid: default `bg-blue-500` buttons, default Tailwind gray scale used untouched, drop-shadow-heavy cards, rainbow-colored charts with no relationship to the rest of the UI.
+
+## 3.2 Color System
+
+Define a small, deliberate palette rather than using raw Tailwind colors ad hoc:
+
+* **Background layers** — base app background, card background, and elevated/hover background as three distinct, closely-related neutral tones (not pure white/black).
+* **Text** — primary, secondary (muted), and disabled text tones with sufficient contrast at each layer.
+* **Accent** — one primary accent color used for primary buttons, active nav state, active sort/filter indicators, and links. Used sparingly — it should mean something when it appears.
+* **Semantic colors** — success, warning, danger, and info, used consistently (e.g. error states, destructive actions, at-risk badges).
+* **Segment colors** — each of VIP, High Value, Standard, At Risk, and No Purchase History gets a distinct badge color, but badges must also carry a text label and/or icon — color is never the only signal (see Section 33).
+
+Colors should be defined once as CSS variables / Tailwind theme tokens and referenced everywhere, never hardcoded per-component.
+
+## 3.3 Typography
+
+* One typeface family for the whole app (a system font stack or a single Google Font such as Inter is sufficient — do not mix decorative and body fonts).
+* A defined type scale: page title, section heading, card heading, body text, small/meta text, table cell text. Every text element in the app should map to one of these, not a one-off `text-[13px]`.
+* Numbers in KPI cards and tables should use a monospace or tabular-numeral treatment so figures align and don't jitter between states.
+
+## 3.4 Spacing & Layout
+
+* Use a consistent spacing scale (Tailwind's default 4px-based scale is fine) — do not mix arbitrary pixel values.
+* Define standard card padding, table row height, and section gap once, and reuse them everywhere.
+* Content max-width for dashboard pages should be fixed and consistent (see Section 4).
+
+## 3.5 Component Library
+
+UI primitives (select, dropdown, dialog, tooltip, combobox, popover) are built with **shadcn/ui** on top of Tailwind, not hand-rolled. This guarantees consistent styling and correct accessibility behavior across the app. See `ARCHITECTURE.md` Section 2 for the rationale.
+
+## 3.6 Dark Mode
+
+The application supports light and dark themes.
+
+* Theme is toggled from the header and persisted across sessions (`localStorage`).
+* Both themes are built from the same token system (Section 3.2) — dark mode is not an afterthought CSS override, it's a second value for each token.
+* Charts, badges, and semantic colors must remain legible and distinguishable in both themes.
+* Respect `prefers-color-scheme` as the default on first visit, before any explicit user choice.
+
+Dark mode is a common expectation for a "modern" data tool and is inexpensive if the token system in 3.2 is followed from the start — it becomes expensive only when colors are hardcoded per-component.
+
+---
+
+# 4. Application Structure
 
 The application contains four primary areas:
 
@@ -68,11 +118,11 @@ Authentication controls should provide:
 * Current analyst identity
 * Logout
 
-A Settings route may exist for application-level settings, but it should not contain fabricated account or CRM functionality.
+A Settings route may exist for application-level settings (including the theme toggle if not placed in the header), but it should not contain fabricated account or CRM functionality.
 
 ---
 
-# 4. Global Layout
+# 5. Global Layout
 
 Authenticated pages use a shared application shell.
 
@@ -110,7 +160,7 @@ Authenticated pages use a shared application shell.
 
 ---
 
-# 5. Navigation
+# 6. Navigation
 
 The sidebar should contain:
 
@@ -120,7 +170,7 @@ Customers
 Product Analytics
 ```
 
-The active route should have a clear visual state.
+The active route should have a clear visual state, using the accent color defined in Section 3.2.
 
 Navigation should remain consistent across authenticated pages.
 
@@ -128,13 +178,14 @@ The header should provide:
 
 * Page title or contextual heading
 * Optional page-level actions
+* Theme toggle (light / dark)
 * Analyst/account control
 
 The navigation must not expose routes that do not exist.
 
 ---
 
-# 6. Login Page
+# 7. Login Page
 
 The login page provides the demo authentication entry point.
 
@@ -172,7 +223,7 @@ Authenticated users should not remain on the login page.
 
 ---
 
-# 7. Dashboard Overview
+# 8. Dashboard Overview
 
 The dashboard is the primary landing page after authentication.
 
@@ -184,7 +235,7 @@ The page should prioritize high-level metrics first, followed by distributions a
 
 ---
 
-## 7.1 KPI Section
+## 8.1 KPI Section
 
 The first section should contain key customer and purchasing metrics.
 
@@ -203,7 +254,7 @@ Additional useful metrics may include:
 KPI cards should provide:
 
 * Clear metric label
-* Primary value
+* Primary value (using the tabular-numeral treatment from Section 3.3)
 * Short contextual description where useful
 
 The dashboard must not display unsupported metrics such as:
@@ -215,7 +266,7 @@ The dashboard must not display unsupported metrics such as:
 
 ---
 
-# 8. Customer Segment Overview
+# 9. Customer Segment Overview
 
 The dashboard should display the distribution of customer segments.
 
@@ -238,13 +289,13 @@ No Purchase History
 
 is a purchase-status state rather than a customer segment.
 
-A chart such as a donut or bar chart may be used.
+A chart such as a donut or bar chart may be used, colored using the segment palette defined in Section 3.2.
 
 The exact visualization can be chosen during implementation based on readability.
 
 ---
 
-# 9. Purchase-History Coverage
+# 10. Purchase-History Coverage
 
 The dashboard should show how much of the customer population has purchase data.
 
@@ -262,7 +313,7 @@ The interface should not hide customers without purchases.
 
 ---
 
-# 10. Spending Analysis
+# 11. Spending Analysis
 
 The dashboard should provide a visual summary of customer spending.
 
@@ -280,7 +331,7 @@ No artificial time-series chart should be created because DummyJSON does not pro
 
 ---
 
-# 11. Product Insights
+# 12. Product Insights
 
 The dashboard should provide a concise product-performance section.
 
@@ -306,7 +357,7 @@ Product information may include:
 
 ---
 
-# 12. Customers Page
+# 13. Customers Page
 
 The Customers page is the primary customer investigation interface.
 
@@ -326,14 +377,14 @@ Pagination
 
 ---
 
-# 13. Customer Toolbar
+# 14. Customer Toolbar
 
 The customer toolbar should provide:
 
 * Search
-* Segment filter
-* Purchase-history filter
-* Sorting
+* Segment filter (shadcn/ui `Select`)
+* Purchase-history filter (shadcn/ui `Select`)
+* Sorting (shadcn/ui `DropdownMenu`)
 * Pagination controls where appropriate
 
 Search and filters should work together.
@@ -350,7 +401,7 @@ The results should satisfy all active conditions.
 
 ---
 
-# 14. Search
+# 15. Search
 
 Search should allow users to find customers by useful identity information.
 
@@ -375,7 +426,7 @@ Try adjusting your search or filters.
 
 ---
 
-# 15. Segment Filter
+# 16. Segment Filter
 
 The segment filter should provide:
 
@@ -393,7 +444,7 @@ It belongs to the purchase-history filter.
 
 ---
 
-# 16. Purchase-History Filter
+# 17. Purchase-History Filter
 
 The purchase-history filter should provide:
 
@@ -407,7 +458,7 @@ This allows users to explicitly find customers without purchases.
 
 ---
 
-# 17. Sorting
+# 18. Sorting
 
 The customer list should support sorting by useful fields.
 
@@ -425,11 +476,11 @@ Ascending
 Descending
 ```
 
-The current sorting state should be visually clear.
+The current sorting state should be visually clear, using the accent color, not color alone (see Section 33).
 
 ---
 
-# 18. URL-Based Filters
+# 19. URL-Based Filters
 
 Search, filtering, sorting, and pagination should be represented in the URL.
 
@@ -449,7 +500,7 @@ Changing filters should update the URL.
 
 ---
 
-# 19. Customer List
+# 20. Customer List
 
 The customer list should contain all **208 customers**, including customers without purchase history.
 
@@ -471,7 +522,7 @@ The table should support horizontal scrolling only when necessary.
 
 ---
 
-# 20. Customer Row
+# 21. Customer Row
 
 Each row should provide enough information for quick scanning.
 
@@ -480,7 +531,7 @@ Customer identity should include:
 * Avatar
 * Full name
 
-The segment should use a consistent badge style.
+The segment should use a consistent badge style from the segment palette (Section 3.2).
 
 Customers without purchase history should clearly display:
 
@@ -492,7 +543,7 @@ instead of an empty value.
 
 ---
 
-# 21. Customer Profile
+# 22. Customer Profile
 
 Selecting a customer opens:
 
@@ -520,7 +571,7 @@ Derived Insights
 
 ---
 
-# 22. Customer Header
+# 23. Customer Header
 
 The profile header should contain:
 
@@ -536,7 +587,7 @@ The page should provide an obvious way to return to the customer list.
 
 ---
 
-# 23. Customer Summary
+# 24. Customer Summary
 
 The profile should display:
 
@@ -558,7 +609,7 @@ The UI should also explain that purchase history is unavailable.
 
 ---
 
-# 24. Purchase History
+# 25. Purchase History
 
 Customers with purchases should see their purchase history.
 
@@ -576,7 +627,7 @@ The interface should not invent dates.
 
 ---
 
-# 25. Purchased Products
+# 26. Purchased Products
 
 The profile should show products contained in the customer's purchases.
 
@@ -605,7 +656,7 @@ Purchase Item
 
 ---
 
-# 26. Customer Insights
+# 27. Customer Insights
 
 The profile may provide derived insights based strictly on available data.
 
@@ -633,7 +684,7 @@ because those conclusions require data that DummyJSON does not provide.
 
 ---
 
-# 27. Product Analytics Page
+# 28. Product Analytics Page
 
 The Product Analytics page provides a deeper view of purchasing patterns.
 
@@ -663,7 +714,7 @@ The page should make it clear that product rating and purchasing popularity are 
 
 ---
 
-# 28. Loading States
+# 29. Loading States
 
 Every data-driven page must have a meaningful loading state.
 
@@ -674,11 +725,11 @@ Recommended approach:
 * Skeleton chart containers
 * Skeleton profile sections
 
-Loading states should preserve the expected layout where practical to reduce visual movement.
+Loading states should preserve the expected layout where practical to reduce visual movement, and should use the same background-layer tokens as the loaded content (no flash of unstyled or mismatched-theme content).
 
 ---
 
-# 29. Error States
+# 30. Error States
 
 If an API request fails, the relevant area should display:
 
@@ -699,7 +750,7 @@ If only one section fails, the entire application should not necessarily become 
 
 ---
 
-# 30. Empty States
+# 31. Empty States
 
 Empty states must explain why content is missing.
 
@@ -729,7 +780,7 @@ Empty states must be distinct from loading and error states.
 
 ---
 
-# 31. Not Found States
+# 32. Not Found States
 
 If a customer ID does not correspond to a known customer:
 
@@ -743,7 +794,7 @@ Provide a way to return to the customer list.
 
 ---
 
-# 32. Responsive Behavior
+# 33. Responsive Behavior
 
 ## Desktop
 
@@ -803,7 +854,7 @@ Customer profile sections should stack vertically.
 
 ---
 
-# 33. Accessibility
+# 34. Accessibility
 
 Interactive elements should:
 
@@ -812,15 +863,15 @@ Interactive elements should:
 * Show visible focus states
 * Use semantic HTML where appropriate
 * Provide meaningful labels
-* Maintain sufficient contrast
+* Maintain sufficient contrast in both light and dark themes
 
 Charts should have accessible surrounding text or summaries so that important information is not available only through visual interpretation.
 
-Status badges should not rely on color alone.
+Status badges should not rely on color alone — pair each segment/status color with a text label (already required by Section 3.2, restated here as an accessibility requirement, not just a style preference).
 
 ---
 
-# 34. Formatting
+# 35. Formatting
 
 The interface should use consistent formatting for:
 
@@ -830,7 +881,7 @@ Use a consistent currency format throughout the application.
 
 ### Numbers
 
-Use readable number formatting for large values.
+Use readable number formatting for large values, with tabular numerals in KPI cards and tables (Section 3.3).
 
 ### Percentages
 
@@ -844,7 +895,7 @@ Formatting utilities should be centralized rather than implemented independently
 
 ---
 
-# 35. Interaction Rules
+# 36. Interaction Rules
 
 The interface should provide immediate feedback for user actions.
 
@@ -857,14 +908,15 @@ Examples:
 * Clicking a customer opens their profile
 * Browser back returns to the previous filtered customer view where possible
 * Logout clears authentication state and returns to login
+* Toggling the theme updates immediately without a page reload
 
 Destructive actions are not part of the core CRM scope.
 
 ---
 
-# 36. Visual Consistency
+# 37. Visual Consistency
 
-The following UI elements should have consistent styles:
+The following UI elements should have consistent styles, driven by the tokens defined in Section 3:
 
 * Buttons
 * Inputs
@@ -881,7 +933,7 @@ Customer segments should use distinct visual treatments, but meaning must not de
 
 ---
 
-# 37. Data Honesty in the UI
+# 38. Data Honesty in the UI
 
 The UI must never imply that unsupported information exists.
 
@@ -899,7 +951,7 @@ When information is unavailable, communicate that explicitly.
 
 ---
 
-# 38. Core User Flows
+# 39. Core User Flows
 
 ## Login
 
@@ -949,7 +1001,7 @@ Customer Profile
 
 ---
 
-# 39. Primary UX Principle
+# 40. Primary UX Principle
 
 The dashboard should optimize for **customer investigation and data understanding**, not for maximizing the number of charts or UI elements.
 
