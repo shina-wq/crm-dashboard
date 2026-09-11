@@ -33,12 +33,34 @@
     --color-secondary: var(--secondary);
     --color-primary-foreground: var(--primary-foreground);
     --color-primary: var(--primary);
+    --color-primary-hover: var(--primary-hover);
     --color-popover-foreground: var(--popover-foreground);
     --color-popover: var(--popover);
     --color-card-foreground: var(--card-foreground);
     --color-card: var(--card);
     --color-foreground: var(--foreground);
     --color-background: var(--background);
+
+    /* Semantic (§3.2) */
+    --color-success: var(--success);
+    --color-success-foreground: var(--success-foreground);
+    --color-warning: var(--warning);
+    --color-warning-foreground: var(--warning-foreground);
+    --color-danger: var(--danger);
+    --color-danger-foreground: var(--danger-foreground);
+
+    /* Segment badges (§3.2) */
+    --color-segment-vip: var(--segment-vip);
+    --color-segment-vip-foreground: var(--segment-vip-foreground);
+    --color-segment-high-value: var(--segment-high-value);
+    --color-segment-high-value-foreground: var(--segment-high-value-foreground);
+    --color-segment-standard: var(--segment-standard);
+    --color-segment-standard-foreground: var(--segment-standard-foreground);
+    --color-segment-at-risk: var(--segment-at-risk);
+    --color-segment-at-risk-foreground: var(--segment-at-risk-foreground);
+    --color-segment-no-history-border: var(--segment-no-history-border);
+    --color-segment-no-history-foreground: var(--segment-no-history-foreground);
+
     --radius-sm: calc(var(--radius) * 0.6);
     --radius-md: calc(var(--radius) * 0.8);
     --radius-lg: var(--radius);
@@ -49,72 +71,128 @@
 }
 
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
+    /* Base neutrals — Slate (§3.2) */
+    --background: #F8FAFC;
+    --foreground: #0F172A;
+    --card: #FFFFFF;
+    --card-foreground: #0F172A;
+    --popover: #FFFFFF;
+    --popover-foreground: #0F172A;
+    --border: #E2E8F0;
+    --input: #E2E8F0;
+    --muted: #F1F5F9;
+    --muted-foreground: #64748B;
+
+    /* Accent — Indigo, the only one (§3.2) */
+    --primary: #4F46E5;
+    --primary-hover: #4338CA;
+    --primary-foreground: #FFFFFF;
+    --ring: #4F46E5;
+
+    /* shadcn's "accent" = hover/active-state bg, not the brand accent.
+       Light indigo tint so active nav/menu items read as "selected". */
+    --accent: #EEF2FF;
+    --accent-foreground: #4338CA;
+
+    --secondary: #F1F5F9;
+    --secondary-foreground: #0F172A;
+
+    /* Semantic */
+    --destructive: #B91C1C;
+    --success: #D1FAE5;
+    --success-foreground: #047857;
+    --warning: #FEF3C7;
+    --warning-foreground: #B45309;
+    --danger: #FEE2E2;
+    --danger-foreground: #B91C1C;
+
+    /* Segment badges (tinted style) */
+    --segment-vip: #EDE9FE;
+    --segment-vip-foreground: #6D28D9;
+    --segment-high-value: #EEF2FF;
+    --segment-high-value-foreground: #4338CA;
+    --segment-standard: #F1F5F9;
+    --segment-standard-foreground: #475569;
+    --segment-at-risk: #FEF3C7;
+    --segment-at-risk-foreground: #B45309;
+    --segment-no-history-border: #CBD5E1;
+    --segment-no-history-foreground: #64748B;
+
+    /* Charts — reserve cyan (§3.2), don't force it into use yet */
+    --chart-1: #4F46E5;
+    --chart-2: #8B5CF6;
+    --chart-3: #94A3B8;
+    --chart-4: #CBD5E1;
+    --chart-5: #06B6D4;
+
     --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
+
+    --sidebar: #FFFFFF;
+    --sidebar-foreground: #0F172A;
+    --sidebar-primary: #4F46E5;
+    --sidebar-primary-foreground: #FFFFFF;
+    --sidebar-accent: #EEF2FF;
+    --sidebar-accent-foreground: #4338CA;
+    --sidebar-border: #E2E8F0;
+    --sidebar-ring: #4F46E5;
 }
 
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
+    --background: #0F172A;
+    --foreground: #F8FAFC;
+    --card: #1E293B;
+    --card-foreground: #F8FAFC;
+    --popover: #1E293B;
+    --popover-foreground: #F8FAFC;
+    --border: #334155;
+    --input: #334155;
+    --muted: #1E293B;
+    --muted-foreground: #94A3B8;
+
+    --primary: #6366F1;
+    --primary-hover: #818CF8;
+    --primary-foreground: #F8FAFC;
+    --ring: #6366F1;
+
+    --accent: #3730A3;
+    --accent-foreground: #C7D2FE;
+
+    --secondary: #334155;
+    --secondary-foreground: #F8FAFC;
+
+    --destructive: #FCA5A5;
+    --success: #064E3B;
+    --success-foreground: #6EE7B7;
+    --warning: #78350F;
+    --warning-foreground: #FDE68A;
+    --danger: #7F1D1D;
+    --danger-foreground: #FCA5A5;
+
+    --segment-vip: #4C1D95;
+    --segment-vip-foreground: #DDD6FE;
+    --segment-high-value: #3730A3;
+    --segment-high-value-foreground: #C7D2FE;
+    --segment-standard: #334155;
+    --segment-standard-foreground: #CBD5E1;
+    --segment-at-risk: #78350F;
+    --segment-at-risk-foreground: #FDE68A;
+    --segment-no-history-border: #475569;
+    --segment-no-history-foreground: #94A3B8;
+
+    --chart-1: #6366F1;
+    --chart-2: #A78BFA;
+    --chart-3: #64748B;
+    --chart-4: #475569;
+    --chart-5: #22D3EE;
+
+    --sidebar: #1E293B;
+    --sidebar-foreground: #F8FAFC;
+    --sidebar-primary: #6366F1;
+    --sidebar-primary-foreground: #F8FAFC;
+    --sidebar-accent: #3730A3;
+    --sidebar-accent-foreground: #C7D2FE;
+    --sidebar-border: #334155;
+    --sidebar-ring: #6366F1;
 }
 
 @layer base {
@@ -126,5 +204,8 @@
     }
   html {
     @apply font-sans;
+    }
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
     }
 }
