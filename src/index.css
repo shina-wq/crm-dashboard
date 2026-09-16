@@ -49,17 +49,15 @@
     --color-danger: var(--danger);
     --color-danger-foreground: var(--danger-foreground);
 
-    /* Segment badges (§3.2) */
-    --color-segment-vip: var(--segment-vip);
-    --color-segment-vip-foreground: var(--segment-vip-foreground);
+    /* Segment badges */
     --color-segment-high-value: var(--segment-high-value);
     --color-segment-high-value-foreground: var(--segment-high-value-foreground);
-    --color-segment-standard: var(--segment-standard);
-    --color-segment-standard-foreground: var(--segment-standard-foreground);
-    --color-segment-at-risk: var(--segment-at-risk);
-    --color-segment-at-risk-foreground: var(--segment-at-risk-foreground);
-    --color-segment-no-history-border: var(--segment-no-history-border);
-    --color-segment-no-history-foreground: var(--segment-no-history-foreground);
+    --color-segment-active: var(--segment-active);
+    --color-segment-active-foreground: var(--segment-active-foreground);
+    --color-segment-low-engagement: var(--segment-low-engagement);
+    --color-segment-low-engagement-foreground: var(--segment-low-engagement-foreground);
+    --color-segment-no-purchase: var(--segment-no-purchase);
+    --color-segment-no-purchase-foreground: var(--segment-no-purchase-foreground);
 
     --radius-sm: calc(var(--radius) * 0.6);
     --radius-md: calc(var(--radius) * 0.8);
@@ -107,16 +105,14 @@
     --danger-foreground: #B91C1C;
 
     /* Segment badges (tinted style) */
-    --segment-vip: #EDE9FE;
-    --segment-vip-foreground: #6D28D9;
-    --segment-high-value: #EEF2FF;
-    --segment-high-value-foreground: #4338CA;
-    --segment-standard: #F1F5F9;
-    --segment-standard-foreground: #475569;
-    --segment-at-risk: #FEF3C7;
-    --segment-at-risk-foreground: #B45309;
-    --segment-no-history-border: #CBD5E1;
-    --segment-no-history-foreground: #64748B;
+    --segment-high-value: #EDE9FE;
+    --segment-high-value-foreground: #6D28D9;
+    --segment-active: #EEF2FF;
+    --segment-active-foreground: #4338CA;
+    --segment-low-engagement: #FEF3C7;
+    --segment-low-engagement-foreground: #B45309;
+    --segment-no-purchase: #F1F5F9;
+    --segment-no-purchase-foreground: #475569;
 
     /* Charts — reserve cyan (§3.2), don't force it into use yet */
     --chart-1: #4F46E5;
@@ -168,16 +164,14 @@
     --danger: #7F1D1D;
     --danger-foreground: #FCA5A5;
 
-    --segment-vip: #4C1D95;
-    --segment-vip-foreground: #DDD6FE;
-    --segment-high-value: #3730A3;
-    --segment-high-value-foreground: #C7D2FE;
-    --segment-standard: #334155;
-    --segment-standard-foreground: #CBD5E1;
-    --segment-at-risk: #78350F;
-    --segment-at-risk-foreground: #FDE68A;
-    --segment-no-history-border: #475569;
-    --segment-no-history-foreground: #94A3B8;
+    --segment-high-value: #4C1D95;
+    --segment-high-value-foreground: #DDD6FE;
+    --segment-active: #3730A3;
+    --segment-active-foreground: #C7D2FE;
+    --segment-low-engagement: #78350F;
+    --segment-low-engagement-foreground: #FDE68A;
+    --segment-no-purchase: #334155;
+    --segment-no-purchase-foreground: #94A3B8;
 
     --chart-1: #6366F1;
     --chart-2: #A78BFA;
@@ -200,7 +194,7 @@
     @apply border-border outline-ring/50;
     }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground text-sm antialiased;
     }
   html {
     @apply font-sans;
