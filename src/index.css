@@ -52,10 +52,10 @@
     /* Segment badges */
     --color-segment-high-value: var(--segment-high-value);
     --color-segment-high-value-foreground: var(--segment-high-value-foreground);
-    --color-segment-active: var(--segment-active);
-    --color-segment-active-foreground: var(--segment-active-foreground);
-    --color-segment-low-engagement: var(--segment-low-engagement);
-    --color-segment-low-engagement-foreground: var(--segment-low-engagement-foreground);
+    --color-segment-mid-value: var(--segment-mid-value);
+    --color-segment-mid-value-foreground: var(--segment-mid-value-foreground);
+    --color-segment-low-value: var(--segment-low-value);
+    --color-segment-low-value-foreground: var(--segment-low-value-foreground);
     --color-segment-no-purchase: var(--segment-no-purchase);
     --color-segment-no-purchase-foreground: var(--segment-no-purchase-foreground);
 
@@ -107,10 +107,10 @@
     /* Segment badges (tinted style) */
     --segment-high-value: #EDE9FE;
     --segment-high-value-foreground: #6D28D9;
-    --segment-active: #EEF2FF;
-    --segment-active-foreground: #4338CA;
-    --segment-low-engagement: #FEF3C7;
-    --segment-low-engagement-foreground: #B45309;
+    --segment-mid-value: #EEF2FF;
+    --segment-mid-value-foreground: #4338CA;
+    --segment-low-value: #FEF3C7;
+    --segment-low-value-foreground: #B45309;
     --segment-no-purchase: #F1F5F9;
     --segment-no-purchase-foreground: #475569;
 
@@ -166,10 +166,10 @@
 
     --segment-high-value: #4C1D95;
     --segment-high-value-foreground: #DDD6FE;
-    --segment-active: #3730A3;
-    --segment-active-foreground: #C7D2FE;
-    --segment-low-engagement: #78350F;
-    --segment-low-engagement-foreground: #FDE68A;
+    --segment-mid-value: #3730A3;
+    --segment-mid-value-foreground: #C7D2FE;
+    --segment-low-value: #78350F;
+    --segment-low-value-foreground: #FDE68A;
     --segment-no-purchase: #334155;
     --segment-no-purchase-foreground: #94A3B8;
 

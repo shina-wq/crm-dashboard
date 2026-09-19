@@ -2,12 +2,12 @@
 
 ## 1. Purpose
 
-Groups customers into behavioral categories based on purchase activity. Deterministic — same input always produces the same segment.
+Groups customers into spend-based tiers using purchase activity. Deterministic — same input always produces the same segment.
 
 ## 2. Available Data
 
 * `Customer`, `Purchase` (has `total`, `customerId`)
-* 208 customers, 50 purchases
+* 208 customers, 208 purchases (currently exactly one purchase per customer — the logic must not depend on this)
 
 No purchase timestamps exist. Segmentation must not use recency or fabricated dates.
 
@@ -21,18 +21,18 @@ averagePurchaseValue = purchaseCount > 0 ? totalSpending / purchaseCount : 0
 
 ## 4. Segments
 
-| Segment        | Definition                                                  |
-| -------------- | ------------------------------------------------------------ |
-| High Value     | Multiple purchases and high total spending                   |
-| Active         | At least one purchase, doesn't meet High Value criteria      |
-| Low Engagement | One purchase with relatively low spending                    |
-| No Purchase    | Zero purchases                                                |
+| Segment     | Definition                                                     |
+| ----------- | -------------------------------------------------------------- |
+| High Value  | Spending in the top quartile of purchasing customers           |
+| Mid Value   | At least one purchase, spending between the two thresholds     |
+| Low Value   | Spending in the bottom quartile of purchasing customers        |
+| No Purchase | Zero purchases                                                  |
 
-Describes observed behavior only — not a prediction of churn, LTV, or future behavior.
+Tiers are relative to this dataset's spend distribution. They describe observed spending only — not engagement, loyalty, recency, or a prediction of churn, LTV, or future behavior.
 
 ## 5. Threshold Population
 
-Both thresholds below are computed over **customers with `purchaseCount >= 1`** (not all 208 customers, not just `>= 2`). This is the single population used for both `HIGH_VALUE_SPENDING_THRESHOLD` and `LOW_ENGAGEMENT_SPENDING_THRESHOLD`.
+Both thresholds are computed over **customers with `purchaseCount >= 1`** (not all 208 customers).
 
 ```text
 purchasingCustomers = customers.filter(c => c.purchaseCount >= 1)
@@ -45,7 +45,7 @@ Use linear interpolation (same as Excel `PERCENTILE.INC` / numpy default), for a
 
 ```text
 percentile(sortedValues, p):
-  if sortedValues.length === 0: return Infinity   // see §9
+  if sortedValues.length === 0: return Infinity   // see §11
   if sortedValues.length === 1: return sortedValues[0]
 
   rank = p * (sortedValues.length - 1)
@@ -58,30 +58,30 @@ percentile(sortedValues, p):
 ```
 
 ```text
-HIGH_VALUE_SPENDING_THRESHOLD   = percentile(spendValues, 0.75)
-LOW_ENGAGEMENT_SPENDING_THRESHOLD = percentile(spendValues, 0.50)   // median
+HIGH_VALUE_SPENDING_THRESHOLD = percentile(spendValues, 0.75)
+LOW_VALUE_SPENDING_THRESHOLD  = percentile(spendValues, 0.25)
 ```
 
 ## 7. High Value
 
 ```text
-purchaseCount >= 2
+purchaseCount >= 1
 AND totalSpending >= HIGH_VALUE_SPENDING_THRESHOLD
 ```
 
-## 8. Active
+## 8. Mid Value
 
 ```text
 purchaseCount >= 1
 AND not High Value
-AND not Low Engagement
+AND not Low Value
 ```
 
-## 9. Low Engagement
+## 9. Low Value
 
 ```text
-purchaseCount === 1
-AND totalSpending < LOW_ENGAGEMENT_SPENDING_THRESHOLD
+purchaseCount >= 1
+AND totalSpending < LOW_VALUE_SPENDING_THRESHOLD
 ```
 
 ## 10. No Purchase
@@ -92,31 +92,33 @@ purchaseCount === 0
 
 ## 11. Edge Cases
 
-* **`spendValues` is empty** (no customer has ever purchased): `percentile()` returns `Infinity`. No customer can satisfy `totalSpending >= Infinity`, so nobody is classified High Value — everyone with `purchaseCount >= 1` falls to Active or Low Engagement correctly, and `purchaseCount === 0` still yields No Purchase.
-* **`spendValues` has exactly 1 value**: `percentile()` returns that single value. A lone purchasing customer compares against their own spend.
-* **Tie at threshold**: comparisons use `>=` / `<`, so a value exactly at the threshold counts toward the higher tier (High Value at `>=`, Low Engagement excludes the median itself since it uses `<`).
+* **`spendValues` is empty** (nobody has purchased): thresholds are never used, because every customer is No Purchase. `percentile()` returns `Infinity` only so the function is total.
+* **`spendValues` has exactly 1 value**: both thresholds equal that value. The lone purchaser is High Value (`>=` is checked first).
+* **All purchasers spend the same amount**: both thresholds are equal, so everyone is High Value.
+* **Tie at a threshold**: High Value uses `>=` (a tie counts toward the higher tier); Low Value uses `<` (a tie at the low threshold stays Mid Value).
+* **Distribution**: with distinct spend values, expect roughly 25% High, 50% Mid, 25% Low. Ties can shift this.
 
 ## 12. Evaluation Order
 
 ```text
-1. No Purchase       (purchaseCount === 0)
-2. High Value        (purchaseCount >= 2 AND totalSpending >= threshold)
-3. Low Engagement    (purchaseCount === 1 AND totalSpending < threshold)
-4. Active             (everything else with purchaseCount >= 1)
+1. No Purchase   (purchaseCount === 0)
+2. High Value    (totalSpending >= HIGH_VALUE_SPENDING_THRESHOLD)
+3. Low Value     (totalSpending <  LOW_VALUE_SPENDING_THRESHOLD)
+4. Mid Value     (everything else with purchaseCount >= 1)
 ```
 
 ## 13. Segment Metadata
 
 ```ts
-type CustomerSegment = "high-value" | "active" | "low-engagement" | "no-purchase"
+type CustomerSegment = "high-value" | "mid-value" | "low-value" | "no-purchase"
 ```
 
-| Segment        | CRM Focus                          |
-| -------------- | ----------------------------------- |
-| High Value     | Retain and strengthen relationship  |
-| Active         | Encourage repeat purchases          |
-| Low Engagement | Encourage deeper engagement         |
-| No Purchase    | Acquisition or onboarding           |
+| Segment     | CRM Focus                          |
+| ----------- | ---------------------------------- |
+| High Value  | Retain and strengthen relationship |
+| Mid Value   | Grow spend per customer            |
+| Low Value   | Encourage deeper engagement        |
+| No Purchase | Acquisition or onboarding          |
 
 ## 14. Derived Model
 
@@ -140,11 +142,11 @@ No `Math.random()`, no current time, no fabricated dates, no external state. Sam
 
 ## 16. Limitations
 
-No real purchase dates, activity timestamps, churn data, or LTV. Segments must never be presented as churn risk, LTV, loyalty, recency, or predicted future behavior.
+No real purchase dates, activity timestamps, churn data, or LTV. Segments must never be presented as churn risk, LTV, loyalty, engagement, recency, or predicted future behavior.
 
-## 17. Why Not RFM
+## 17. Why Spend-Only
 
-Frequency and monetary value are available; recency is not (no timestamps). Fabricating dates to complete RFM would produce misleading segments. This model uses **Frequency + Monetary** only.
+In the current dataset every customer has exactly one purchase, so purchase frequency never varies and cannot separate customers. Recency is unavailable (no timestamps). Fabricating dates to complete RFM would produce misleading segments. This model uses **monetary value only**. If purchases per customer ever vary, frequency can be added back as a rule.
 
 ## 18. Dashboard Usage
 
