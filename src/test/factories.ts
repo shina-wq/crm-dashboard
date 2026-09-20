@@ -1,6 +1,15 @@
+import type { AuthUser } from "@/types/auth"
 import type { Customer } from "@/types/customer"
 import type { Product } from "@/types/product"
 import type { Purchase, PurchaseItem } from "@/types/purchase"
+
+export const makeAuthUser = (overrides: Partial<AuthUser> = {}): AuthUser => ({
+  id: 1,
+  username: "emilys",
+  firstName: "Emily",
+  lastName: "Johnson",
+  ...overrides,
+})
 
 export const makeCustomer = (id: number, overrides: Partial<Customer> = {}): Customer => ({
   id,

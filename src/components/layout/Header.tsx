@@ -19,14 +19,19 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
+import { useAuth } from "@/features/auth/auth-context"
 import { useTheme } from "@/hooks/use-theme"
 
-// TODO: replace with real analyst session once auth is built
-const currentUser = { name: "Jane Doe", role: "Analyst", initials: "JD" }
+// TODO: replace with real role data. DummyJSON's login response has no role.
+const ROLE = "Analyst"
 
 export function Header() {
   const [theme, toggleTheme] = useTheme()
+  const { user, signOut } = useAuth()
   const [hasUnread] = useState(true) // TODO: wire to real notifications
+
+  const name = user ? `${user.firstName} ${user.lastName}` : ""
+  const initials = user ? `${user.firstName.charAt(0)}${user.lastName.charAt(0)}` : ""
 
   return (
     <header className="flex h-14 shrink-0 items-center gap-4 border-b border-border bg-background px-6">
@@ -70,11 +75,11 @@ export function Header() {
               className="ml-1 flex items-center gap-2 rounded-md py-1 pl-1 pr-2 text-sm transition-colors hover:bg-muted"
             >
               <span className="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
-                {currentUser.initials}
+                {initials}
               </span>
               <span className="text-left leading-tight">
-                <span className="block font-medium text-foreground">{currentUser.name}</span>
-                <span className="block text-xs text-muted-foreground">{currentUser.role}</span>
+                <span className="block font-medium text-foreground">{name}</span>
+                <span className="block text-xs text-muted-foreground">{ROLE}</span>
               </span>
               <ChevronDown className="size-4 text-muted-foreground" aria-hidden="true" />
             </button>
@@ -93,7 +98,7 @@ export function Header() {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive" onSelect={() => {/* TODO: wire logout */}}>
+            <DropdownMenuItem variant="destructive" onSelect={signOut}>
               <LogOut className="size-4" />
               Log out
             </DropdownMenuItem>

@@ -9,6 +9,7 @@ import {
   HelpCircle,
   type LucideIcon,
 } from "lucide-react"
+import { Brand } from "@/components/shared/Brand"
 import { cn } from "@/lib/utils"
 
 type NavItem = {
@@ -53,14 +54,8 @@ function NavRow({ label, to, icon: Icon }: NavItem) {
 export function Sidebar() {
   return (
     <aside className="flex h-screen w-60 shrink-0 flex-col border-r border-sidebar-border bg-sidebar">
-      <div className="flex items-center gap-2 px-5 py-5">
-        <div className="flex size-8 items-center justify-center rounded-lg bg-sidebar-primary">
-          <BarChart3 className="size-4 text-sidebar-primary-foreground" aria-hidden="true" />
-        </div>
-        <div>
-          <p className="text-sm font-medium leading-none text-sidebar-foreground">CRM</p>
-          <p className="mt-1 text-xs text-muted-foreground">Customer Intelligence</p>
-        </div>
+      <div className="px-5 py-5">
+        <Brand />
       </div>
 
       <nav aria-label="Main" className="flex flex-1 flex-col gap-1 px-3">

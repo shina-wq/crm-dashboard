@@ -1,8 +1,15 @@
-import { Navigate, Outlet } from "react-router-dom"
-
-// TODO: replace with real auth state once auth is built
-const isAuthenticated = true
+import { Navigate, Outlet, useLocation } from "react-router-dom"
+import { useAuth } from "./auth-context"
 
 export function ProtectedRoute() {
-  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />
+  const { user } = useAuth()
+  const location = useLocation()
+
+  if (!user) {
+    // Remember where the user was going so login can send them back.
+    const from = location.pathname + location.search
+    return <Navigate to="/login" replace state={{ from }} />
+  }
+
+  return <Outlet />
 }

@@ -46,6 +46,14 @@ export const dummyJsonCartSchema = z.object({
   products: z.array(dummyJsonCartItemSchema).min(1),
 })
 
+// Identity fields only. The tokens in the login response are ignored on purpose (see auth-api.ts).
+export const dummyJsonLoginSchema = z.object({
+  id: idSchema,
+  username: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+})
+
 // Envelopes: records stay `unknown` so one bad record can't fail the whole list.
 export const usersResponseSchema = z.object({ users: z.array(z.unknown()) })
 export const productsResponseSchema = z.object({ products: z.array(z.unknown()) })
@@ -54,3 +62,4 @@ export const cartsResponseSchema = z.object({ carts: z.array(z.unknown()) })
 export type DummyJsonUser = z.infer<typeof dummyJsonUserSchema>
 export type DummyJsonProduct = z.infer<typeof dummyJsonProductSchema>
 export type DummyJsonCart = z.infer<typeof dummyJsonCartSchema>
+export type DummyJsonLogin = z.infer<typeof dummyJsonLoginSchema>
