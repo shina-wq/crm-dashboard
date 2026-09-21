@@ -2,7 +2,7 @@ import { Navigate, useLocation } from "react-router-dom"
 import { Brand } from "@/components/shared/Brand"
 import { useAuth } from "@/features/auth/auth-context"
 import { LoginForm } from "@/features/auth/LoginForm"
-import { SegmentShowcase } from "@/features/auth/SegmentShowcase"
+import { LoginIllustration } from "@/features/auth/LoginIllustration"
 
 type LocationState = { from?: string } | null
 
@@ -27,8 +27,9 @@ export function LoginPage() {
         </div>
       </div>
 
-      <div className="hidden items-center justify-center border-l border-border bg-muted p-12 lg:flex">
-        <SegmentShowcase />
+      <div className="hidden items-center justify-center border-l border-border bg-muted bg-[radial-gradient(var(--border)_1px,transparent_1px)] bg-size-[20px_20px] p-12 lg:flex">
+
+        <LoginIllustration />
       </div>
     </main>
   )
