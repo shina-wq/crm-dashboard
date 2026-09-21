@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import {
   Search,
   Bell,
+  PanelLeft,
   Moon,
   Sun,
   ChevronDown,
@@ -25,7 +26,13 @@ import { useTheme } from "@/hooks/use-theme"
 // TODO: replace with real role data. DummyJSON's login response has no role.
 const ROLE = "Analyst"
 
-export function Header() {
+type HeaderProps = {
+  sidebarCollapsed: boolean
+  onToggleSidebar: () => void
+  onOpenMobileNav: () => void
+}
+
+export function Header({ sidebarCollapsed, onToggleSidebar, onOpenMobileNav }: HeaderProps) {
   const [theme, toggleTheme] = useTheme()
   const { user, signOut } = useAuth()
   const [hasUnread] = useState(true) // TODO: wire to real notifications
@@ -35,11 +42,33 @@ export function Header() {
 
   return (
     <header className="flex h-14 shrink-0 items-center gap-4 border-b border-border bg-background px-6">
+      {/* Below lg: opens the drawer. From lg up: collapses the sidebar. Only one is visible. */}
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        aria-label="Open navigation"
+        className="-ml-2 lg:hidden"
+        onClick={onOpenMobileNav}
+      >
+        <PanelLeft className="size-4" aria-hidden="true" />
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        aria-label="Toggle sidebar"
+        aria-controls="sidebar"
+        aria-expanded={!sidebarCollapsed}
+        className="-ml-2 max-lg:hidden text-muted-foreground"
+        onClick={onToggleSidebar}
+      >
+        <PanelLeft className="size-4" aria-hidden="true" />
+      </Button>
+
       <InputGroup className="max-w-md">
         <InputGroupAddon>
           <Search className="size-4" aria-hidden="true" />
         </InputGroupAddon>
-        <InputGroupInput placeholder="Search customers, products, or anything..." />
+        <InputGroupInput aria-label="Search" placeholder="Search customers, products, or anything..." />
         <InputGroupAddon align="inline-end">
           <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">
             ⌘K
@@ -54,11 +83,15 @@ export function Header() {
           aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
           onClick={toggleTheme}
         >
-          {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
+          {theme === "dark" ? (
+            <Sun className="size-4" aria-hidden="true" />
+          ) : (
+            <Moon className="size-4" aria-hidden="true" />
+          )}
         </Button>
 
         <Button variant="ghost" size="icon-sm" aria-label="Notifications" className="relative">
-          <Bell className="size-4" />
+          <Bell className="size-4" aria-hidden="true" />
           {hasUnread && (
             <span
               className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-destructive"
