@@ -41,7 +41,7 @@ export function AppShell() {
             onToggleSidebar={toggleCollapsed}
             onOpenMobileNav={() => setMobileOpen(true)}
           />
-          <main className="flex-1 overflow-y-auto p-6">
+          <main className="flex flex-1 flex-col gap-6 overflow-y-auto p-6">
             <Outlet />
           </main>
         </div>

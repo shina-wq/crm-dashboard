@@ -32,7 +32,7 @@ type HeaderProps = {
   onOpenMobileNav: () => void
 }
 
-export function Header({ sidebarCollapsed, onToggleSidebar, onOpenMobileNav }: HeaderProps) {
+export function Header({ onToggleSidebar, onOpenMobileNav }: HeaderProps) {
   const [theme, toggleTheme] = useTheme()
   const { user, signOut } = useAuth()
   const [hasUnread] = useState(true) // TODO: wire to real notifications
@@ -57,7 +57,6 @@ export function Header({ sidebarCollapsed, onToggleSidebar, onOpenMobileNav }: H
         size="icon-sm"
         aria-label="Toggle sidebar"
         aria-controls="sidebar"
-        aria-expanded={!sidebarCollapsed}
         className="-ml-2 max-lg:hidden text-muted-foreground"
         onClick={onToggleSidebar}
       >
