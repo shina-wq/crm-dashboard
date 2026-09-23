@@ -10,6 +10,7 @@ import { ProductsPage } from "@/pages/ProductsPage"
 import { AnalyticsPage } from "@/pages/AnalyticsPage"
 import { SettingsPage } from "@/pages/SettingsPage"
 import { HelpPage } from "@/pages/HelpPage"
+import { NotFoundPage } from "@/pages/NotFoundPage"
 
 export const router = createBrowserRouter([
   { path: "/", element: <Navigate to="/dashboard" replace /> },
@@ -32,4 +33,5 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  { path: "*", element: <NotFoundPage /> },
 ])
